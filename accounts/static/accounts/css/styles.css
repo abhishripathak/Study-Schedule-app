@@ -1,0 +1,55 @@
+/* Global styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #ffe6f2; /* Light pink background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+/* Login container */
+.login-container {
+    background: #ff99cc; /* Soft pink */
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    text-align: center;
+}
+
+/* Heading */
+h2 {
+    color: white;
+    margin-bottom: 20px;
+}
+
+/* Input fields */
+input[type="text"],
+input[type="password"] {
+    width: 90%;
+    padding: 10px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 6px;
+    outline: none;
+    background: #ffe6f2; /* Light pink input */
+}
+
+/* Login button */
+button {
+    width: 100%;
+    padding: 10px;
+    background: #ff66b2; /* Darker pink */
+    border: none;
+    color: white;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+}
+
+button:hover {
+    background: #ff3385; /* Even darker pink */
+}

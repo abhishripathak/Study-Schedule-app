@@ -1,0 +1,98 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign Up | Study Planner</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #ffe6f0, #ffd9ec);
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .signup-container {
+            max-width: 500px;
+            margin: 50px auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(255, 105, 180, 0.2);
+            padding: 30px;
+        }
+        .signup-container h2 {
+            color: #ff4d94;
+            font-weight: bold;
+        }
+        .form-control:focus {
+            border-color: #ff4d94;
+            box-shadow: 0 0 0 0.2rem rgba(255, 77, 148, 0.25);
+        }
+        .btn-pink {
+            background-color: #ff4d94;
+            border: none;
+            color: white;
+            transition: all 0.3s ease-in-out;
+        }
+        .btn-pink:hover {
+            background-color: #e60073;
+        }
+        .errorlist {
+            color: red;
+            list-style: none;
+            padding-left: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="signup-container">
+        <h2 class="text-center mb-4">🎀 Create Your Account</h2>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-success" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+
+            <div class="form-group">
+                <label for="{{ form.username.id_for_label }}">Username</label>
+                {{ form.username }}
+                {{ form.username.errors }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.email.id_for_label }}">Email</label>
+                {{ form.email }}
+                {{ form.email.errors }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.password1.id_for_label }}">Password</label>
+                {{ form.password1 }}
+                {{ form.password1.errors }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.password2.id_for_label }}">Confirm Password</label>
+                {{ form.password2 }}
+                {{ form.password2.errors }}
+            </div>
+
+            <button type="submit" class="btn btn-pink btn-block mt-3">Sign Up</button>
+        </form>
+    </div>
+
+    <script>
+        setTimeout(function() {
+            const alert = document.querySelector('.alert');
+            if (alert) {
+                alert.style.display = 'none';
+            }
+        }, 3000);
+    </script>
+</body>
+</html>

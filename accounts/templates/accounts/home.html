@@ -1,0 +1,119 @@
+{% extends 'accounts/base.html' %}
+
+{% block content %}
+<style>
+    body {
+        font-family: 'Segoe UI', sans-serif;
+        background-color: #ffe6f0;
+        margin: 0;
+        padding: 0;
+    }
+
+    .hero {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: linear-gradient(to right, #ffdde1, #ee9ca7);
+    }
+
+    .hero h1 {
+        font-family: 'Poppins', sans-serif;
+        font-size: 3rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+        color: #222;
+    }
+
+    .hero p {
+        font-size: 1.2rem;
+        color: #333;
+        margin-bottom: 2rem;
+    }
+
+    .btn {
+        padding: 0.8rem 1.5rem;
+        background-color: #ff4d88;
+        color: white;
+        border: none;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: bold;
+        transition: background 0.3s ease;
+    }
+
+    .btn:hover {
+        background-color: #e60073;
+    }
+
+    .features {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        padding: 3rem;
+        background-color: #fff0f5;
+        text-align: center;
+    }
+
+    .feature-box {
+        background: white;
+        padding: 2rem;
+        border-radius: 20px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .feature-box img {
+        width: 60px;
+        margin-bottom: 1rem;
+    }
+
+    .feature-box h3 {
+        margin: 1rem 0 0.5rem;
+        color: #444;
+    }
+
+    .feature-box p {
+        font-size: 0.95rem;
+        color: #666;
+    }
+
+    .actions {
+        margin-top: 2rem;
+    }
+
+    .actions a {
+        margin: 0 10px;
+    }
+</style>
+
+<div class="hero">
+    <h1>Personalized Study Planner</h1>
+    <p>A smart way to plan, track, and optimize your study routine!</p>
+    <div class="actions">
+        <a href="{% url 'login' %}" class="btn">Login</a>
+        <a href="{% url 'signup' %}" class="btn btn-pink">Get Started</a>
+
+    </div>
+</div>
+
+<div class="features">
+    <div class="feature-box">
+        <img src="https://cdn-icons-png.flaticon.com/512/1055/1055672.png" alt="Schedules">
+        <h3>Smart Schedules</h3>
+        <p>Automated study plans tailored to your goals.</p>
+    </div>
+    <div class="feature-box">
+        <img src="https://cdn-icons-png.flaticon.com/512/1827/1827415.png" alt="Reminders">
+        <h3>Reminders & Alerts</h3>
+        <p>Never miss a study session with timely alerts.</p>
+    </div>
+    <div class="feature-box">
+        <img src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png" alt="Analytics">
+        <h3>Progress Analytics</h3>
+        <p>Track your learning and improve steadily.</p>
+    </div>
+    <div class="feature-box">
+        <img src="https://cdn-icons-png.flaticon.com/512/3105/3105799.png" alt="Learning Paths">
+        <h3>Personalized Paths</h3>
+        <p>Custom learning routes based on your interests.</p>
+    </div>
+</div>
+{% endblock %}

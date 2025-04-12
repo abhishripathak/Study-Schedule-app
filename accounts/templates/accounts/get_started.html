@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Get Started - Study Planner</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      background: #ffe6f0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .form-container {
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      width: 90%;
+      max-width: 600px;
+    }
+
+    .form-container h2 {
+      text-align: center;
+      color: #ff4da6;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      outline: none;
+    }
+
+    textarea {
+      resize: none;
+    }
+
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      background-color: #ff4da6;
+      color: white;
+      font-weight: bold;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn:hover {
+      background-color: #e60073;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h2>Get Started</h2>
+    <form method="POST" action="{% url 'your_register_view' %}">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input type="text" name="name" required />
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" name="email" required />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" name="password" required />
+      </div>
+
+      <div class="form-group">
+        <label for="education">Education Level</label>
+        <select name="education" required>
+          <option value="">Select</option>
+          <option value="school">School</option>
+          <option value="college">College</option>
+          <option value="grad">Graduate</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="subjects">Subjects (comma-separated)</label>
+        <input type="text" name="subjects" placeholder="e.g. Math, Science, History" />
+      </div>
+
+      <div class="form-group">
+        <label for="study_hours">Available Study Hours per Day</label>
+        <input type="number" name="available_hours" min="1" max="24" class="form-control" required>
+
+
+      </div>
+
+      <div class="form-group">
+        <label for="preferred_time">Preferred Study Time</label>
+        <select name="preferred_time">
+          <option value="morning">Morning</option>
+          <option value="afternoon">Afternoon</option>
+          <option value="evening">Evening</option>
+          <option value="night">Night</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="goal">Study Goal</label>
+        <textarea name="goal" rows="3" placeholder="e.g. Prepare for entrance exam, score 90%+ in finals..."></textarea>
+      </div>
+
+      <button class="btn" type="submit">Create My Plan 🎯</button>
+    </form>
+  </div>
+</body>
+</html>

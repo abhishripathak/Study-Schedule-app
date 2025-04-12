@@ -1,0 +1,114 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Your Dashboard | Study Planner</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #ffe6f0, #ffd9ec);
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .dashboard-container {
+            max-width: 700px;
+            margin: 40px auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(255, 105, 180, 0.2);
+            padding: 30px 40px;
+        }
+        .dashboard-container h2 {
+            color: #ff4d94;
+            font-weight: bold;
+            margin-bottom: 25px;
+        }
+        .form-control:focus {
+            border-color: #ff4d94;
+            box-shadow: 0 0 0 0.2rem rgba(255, 77, 148, 0.25);
+        }
+        .btn-pink {
+            background-color: #ff4d94;
+            border: none;
+            color: white;
+            transition: all 0.3s ease-in-out;
+        }
+        .btn-pink:hover {
+            background-color: #e60073;
+        }
+        label {
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <h2 class="text-center">🎯 Let's Build Your Study Plan</h2>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-success" role="alert">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="education_level">Education Level</label>
+                <select class="form-control" id="education_level" name="education_level" required>
+                    <option value="">Select Education Level</option>
+                    <option value="High School">High School</option>
+                    <option value="Undergraduate">Undergraduate</option>
+                    <option value="Postgraduate">Postgraduate</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="subjects">Subjects (comma-separated)</label>
+                <input type="text" class="form-control" id="subjects" name="subjects" placeholder="e.g., Math, Physics, Chemistry" required>
+            </div>
+
+            <div class="form-group">
+                <label for="available_study_hours">Available Study Hours per Day</label>
+                <input type="number" class="form-control" id="available_study_hours" name="available_study_hours" min="1" max="24" required>
+            </div>
+
+            <div class="form-group">
+                <label for="preferred_study_time">Preferred Study Time</label>
+                <select class="form-control" id="preferred_study_time" name="preferred_study_time" required>
+                    <option value="">Select Time</option>
+                    <option value="Morning">Morning</option>
+                    <option value="Afternoon">Afternoon</option>
+                    <option value="Evening">Evening</option>
+                    <option value="Night">Night</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="study_goal">Study Goal</label>
+                <textarea class="form-control" id="study_goal" name="study_goal" rows="3" placeholder="Enter your study goal..." required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="start_date">Start Date</label>
+                <input type="date" class="form-control" id="start_date" name="start_date" required>
+            </div>
+
+            <div class="form-group">
+                <label for="deadline">Deadline</label>
+                <input type="date" class="form-control" id="deadline" name="deadline" required>
+            </div>
+
+            <button type="submit" class="btn btn-pink btn-block">✨ Generate My Plan</button>
+        </form>
+    </div>
+
+    <script>
+        setTimeout(function () {
+            const alert = document.querySelector('.alert');
+            if (alert) alert.style.display = 'none';
+        }, 3000);
+    </script>
+</body>
+</html>
