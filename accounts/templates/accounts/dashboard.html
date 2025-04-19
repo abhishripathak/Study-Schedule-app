@@ -42,8 +42,9 @@
     </style>
 </head>
 <body>
+
     <div class="dashboard-container">
-        <h2 class="text-center">🎯 Let's Build Your Study Plan</h2>
+        <h2 class="text-center">Let's Build Your Study Plan</h2>
 
         {% if messages %}
             {% for message in messages %}
@@ -100,9 +101,33 @@
                 <input type="date" class="form-control" id="deadline" name="deadline" required>
             </div>
 
-            <button type="submit" class="btn btn-pink btn-block">✨ Generate My Plan</button>
+            <button type="submit" class="btn btn-pink btn-block">Generate My Plan</button>
         </form>
     </div>
+
+    {% if study_plan %}
+        <div class="container mt-5">
+            <h2 style="color: #ff4da6;">Your Personalized Study Plan ✨</h2>
+
+            {% if goal %}
+                <p><strong>Goal:</strong> {{ goal }}</p>
+            {% endif %}
+            {% if preferred_time %}
+                <p><strong>Preferred Time:</strong> {{ preferred_time }}</p>
+            {% endif %}
+
+            {% for day in study_plan %}
+                <div class="day-plan" style="margin-top: 20px; padding: 15px; background: #ffe6f2; border-radius: 10px;">
+                    <h4>{{ day.date }}</h4>
+                    <ul>
+                        {% for session in day.sessions %}
+                            <li>Hour {{ session.hour }}: {{ session.subject }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
 
     <script>
         setTimeout(function () {
