@@ -1,4 +1,4 @@
-{% load static %}
+{% load static %} 
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -71,8 +71,8 @@
             </div>
 
             <div class="form-group">
-                <label for="available_study_hours">Available Study Hours per Day</label>
-                <input type="number" class="form-control" id="available_study_hours" name="available_study_hours" min="1" max="24" required>
+                <label for="available_hours">Available Study Hours per Day</label>
+                <input type="number" class="form-control" id="available_hours" name="available_hours" min="1" max="24" required>
             </div>
 
             <div class="form-group">
@@ -80,7 +80,7 @@
                 <select class="form-control" id="preferred_study_time" name="preferred_study_time" required>
                     <option value="">Select Time</option>
                     <option value="Morning">Morning</option>
-                    <option value="Afternoon">Afternoon</option>
+                    <option value="Afternoon">Afternoon</option> 
                     <option value="Evening">Evening</option>
                     <option value="Night">Night</option>
                 </select>
@@ -97,8 +97,8 @@
             </div>
 
             <div class="form-group">
-                <label for="deadline">Deadline</label>
-                <input type="date" class="form-control" id="deadline" name="deadline" required>
+                <label for="end_date">End Date</label>
+                <input type="date" class="form-control" id="end_date" name="end_date" required>
             </div>
 
             <button type="submit" class="btn btn-pink btn-block">Generate My Plan</button>

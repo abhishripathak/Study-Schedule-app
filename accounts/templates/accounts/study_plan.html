@@ -1,0 +1,31 @@
+{% extends 'accounts/base.html' %}
+
+{% block content %}
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="alert alert-success" role="alert" style="background-color: #d4edda; color: #155724; border-radius: 5px; padding: 10px; margin: 10px 0;">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="container text-center my-5 text-dark">
+        <h2 style="color: deeppink; font-family: 'Lobster', cursive;">Your Personalized Study Plan ✨</h2>
+        <p><strong>🎯 Goal:</strong> {{ goal }}</p>
+        <p><strong>🕒 Preferred Time:</strong> {{ preferred_time }}</p>
+        <br>
+
+        {% for day in study_plan %}
+            <div class="p-4 rounded mb-4 shadow" style="background-color: #fff0f5; border-left: 6px solid deeppink;">
+                <h5 style="font-weight: bold;">📅 {{ day.date }}</h5>
+                <ul style="list-style-type: none; padding-left: 0;">
+                    {% for session in day.sessions %}
+                        <li style="text-align: left;">📘 Hour {{ session.hour }}: <strong>{{ session.subject }}</strong></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
