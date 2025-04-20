@@ -7,13 +7,21 @@
     <title>{% block title %}My Study Planner{% endblock %}</title>
 
     <!-- Main CSS -->
-    <link rel="stylesheet" href="{% static 'accounts\css\styles.css' %}">
+    <link rel="stylesheet" href="{% static 'accounts/css/styles.css' %}">
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Lobster&display=swap" rel="stylesheet">
 </head>
 <body>
-    {% block content %}
-    {% endblock %}
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+    </div>
 </body>
 </html>

@@ -1,31 +1,27 @@
 {% extends 'accounts/base.html' %}
 
 {% block content %}
-    {% if messages %}
-        <div class="messages">
-            {% for message in messages %}
-                <div class="alert alert-success" role="alert" style="background-color: #d4edda; color: #155724; border-radius: 5px; padding: 10px; margin: 10px 0;">
-                    {{ message }}
-                </div>
-            {% endfor %}
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-success" role="alert" style="background-color: #d4edda; color: #155724; border-radius: 5px; padding: 10px; margin-bottom: 20px;">
+            {{ message }}
         </div>
-    {% endif %}
+    {% endfor %}
+{% endif %}
 
-    <div class="container text-center my-5 text-dark">
-        <h2 style="color: deeppink; font-family: 'Lobster', cursive;">Your Personalized Study Plan ✨</h2>
-        <p><strong>🎯 Goal:</strong> {{ goal }}</p>
-        <p><strong>🕒 Preferred Time:</strong> {{ preferred_time }}</p>
-        <br>
+<div class="container text-center my-5 text-dark">
+    <h2 style="color: deeppink;">Your Personalized Study Plan ✨</h2>
+    <p><strong>Goal:</strong> {{ goal }}</p>
+    <p><strong>Preferred Time:</strong> {{ preferred_time }}</p>
+    <br>
 
+    <h3>📅 Daily Study Schedule</h3>
+    <ul class="list-unstyled">
         {% for day in study_plan %}
-            <div class="p-4 rounded mb-4 shadow" style="background-color: #fff0f5; border-left: 6px solid deeppink;">
-                <h5 style="font-weight: bold;">📅 {{ day.date }}</h5>
-                <ul style="list-style-type: none; padding-left: 0;">
-                    {% for session in day.sessions %}
-                        <li style="text-align: left;">📘 Hour {{ session.hour }}: <strong>{{ session.subject }}</strong></li>
-                    {% endfor %}
-                </ul>
-            </div>
+            <li class="p-3 my-2 rounded" style="background-color: #ffe6f0;">
+                <strong>{{ day.date }}</strong>: {{ day.subject }}
+            </li>
         {% endfor %}
-    </div>
+    </ul>
+</div>
 {% endblock %}
