@@ -38,6 +38,12 @@
             gap: 10px;
         }
 
+        .day-label {
+            font-weight: bold;
+            color: #d63384;
+            margin-top: 20px;
+        }
+
         .progress-container {
             width: 100%;
             background-color: #f3f3f3;
@@ -71,11 +77,16 @@
     <h1>Your Personalized Study Plan</h1>
     <form id="study-plan-form">
         <ul>
-            {% for session in study_plan %}
-            <li>
-                <input type="checkbox" class="session-checkbox" id="session-{{ forloop.counter }}">
-                <label for="session-{{ forloop.counter }}">{{ session }}</label>
-            </li>
+            {% for date, subjects in study_plan.items %}
+                <li class="day-label">{{ date }}</li>
+                <ul>
+                    {% for subject in subjects %}
+                        <li>
+                            <input type="checkbox" class="session-checkbox" id="session-{{ forloop.parentloop.counter }}-{{ forloop.counter }}">
+                            <label for="session-{{ forloop.parentloop.counter }}-{{ forloop.counter }}">{{ subject }}</label>
+                        </li>
+                    {% endfor %}
+                </ul>
             {% endfor %}
         </ul>
     </form>

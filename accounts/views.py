@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -88,34 +88,25 @@ def dashboard(request):
         return render(request, 'accounts/dashboard.html')
 
 # Routine generation logic
+
 def generate_study_plan(subjects, available_hours, start_date, end_date, request):
     is_single_day = start_date == end_date
     plan = {}
 
-    if is_single_day:
-        total_minutes = available_hours * 60
-        minutes_per_subject = total_minutes // len(subjects)
+    start = datetime.strptime(start_date, '%Y-%m-%d')
+    end = datetime.strptime(end_date, '%Y-%m-%d')
+    total_days = (end - start).days + 1
 
-        if minutes_per_subject < 10:
-            messages.warning(request, "Each subject gets less than 10 minutes!")
+    subject_index = 0
+    schedule = []
 
-        for subject in subjects:
-            plan[subject] = f"{minutes_per_subject} minutes"
-
-    else:
-        try:
-            start = datetime.strptime(start_date, '%Y-%m-%d')
-            end = datetime.strptime(end_date, '%Y-%m-%d')
-            total_days = (end - start).days + 1
-        except ValueError:
-            messages.error(request, "Invalid date format.")
-            return {}, True
-
-        total_sessions = total_days * available_hours
-        sessions_per_subject = total_sessions // len(subjects)
-
-        for subject in subjects:
-            plan[subject] = f"{sessions_per_subject} sessions ({available_hours} hrs/day)"
+    for day_num in range(total_days):
+        day = (start + timedelta(days=day_num)).strftime('%A, %d %b %Y')
+        plan[day] = []
+        for _ in range(available_hours):
+            subject = subjects[subject_index % len(subjects)]
+            plan[day].append(subject)
+            subject_index += 1
 
     return plan, is_single_day
 
