@@ -6,127 +6,110 @@
     <title>Study Plan</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #ffe6f2; /* Light pink background */
+            font-family: 'Segoe UI', sans-serif;
+            background: #fff0f6;
+            padding: 20px;
             color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            color: #d63384;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 0 10px rgba(214, 51, 132, 0.1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .progress-container {
             width: 100%;
-            background-color: #ffd9ec; /* Light pink */
+            background-color: #f3f3f3;
             border-radius: 5px;
-            margin-top: 20px;
+            margin: 30px auto 10px;
+            height: 25px;
+            max-width: 600px;
         }
 
         .progress-bar {
             width: 0%;
-            height: 20px;
-            background-color: #ff66b2; /* Darker pink */
+            height: 100%;
+            background-color: #d63384;
             border-radius: 5px;
             text-align: center;
             color: white;
+            font-weight: bold;
+            line-height: 25px;
         }
 
         .congrats-message {
             display: none;
             margin-top: 20px;
-            color: #ff3385; /* Even darker pink */
+            color: green;
             font-weight: bold;
-        }
-
-        #study-plan-form ul {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        #study-plan-form li {
-            margin: 10px 0;
-        }
-
-        label {
-            font-size: 18px;
-            color: #ff4d94; /* Pink text */
-        }
-
-        a {
-            color: #ff4d94; /* Pink links */
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        a:hover {
-            color: #e60073; /* Darker pink on hover */
-        }
-
-        .card {
-            background-color: #ffe6f2; /* Light pink */
-            border: 1px solid #ff99cc; /* Pink border */
-            border-radius: 10px;
-            padding: 20px;
-            margin: 10px;
             text-align: center;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .card h3 {
-            color: #ff4d94; /* Pink text */
-        }
-
-        .card .progress-container {
-            margin-top: 10px;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 10px 20px;
-            font-size: 16px;
-            color: white;
-            background-color: #ff4d94; /* Pink button */
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            text-decoration: none;
-        }
-
-        .btn:hover {
-            background-color: #e60073; /* Darker pink on hover */
-        }
-
-        .btn-pink {
-            margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <h1 style="color: #ff4d94;">Your Personalized Study Plan ✨</h1>
-    <p><strong>Goal:</strong> {{ goal }}</p>
-    <p><strong>Preferred Time:</strong> {{ preferred_time }}</p>
+    <h1>Your Personalized Study Plan</h1>
+    <form id="study-plan-form">
+        <ul>
+            {% for session in study_plan %}
+            <li>
+                <input type="checkbox" class="session-checkbox" id="session-{{ forloop.counter }}">
+                <label for="session-{{ forloop.counter }}">{{ session }}</label>
+            </li>
+            {% endfor %}
+        </ul>
+    </form>
 
-    <div class="card-container">
-        {% for subject, details in study_plan.items %}
-        <div class="card">
-            <h3>{{ subject }}</h3>
-            <p>{{ details.sessions }} sessions ({{ details.hours_per_day }} hrs/day)</p>
-            <div class="progress-container">
-                <div class="progress-bar" style="width: {{ details.completion }}%;">{{ details.completion }}% completed</div>
-            </div>
-        </div>
-        {% endfor %}
+    <div class="progress-container">
+        <div class="progress-bar" id="progress-bar">0%</div>
     </div>
 
-    <div>
-        <a href="{% url 'generate_plan' %}" class="btn btn-pink">Regenerate Plan</a>
+    <div class="congrats-message" id="congrats-message">
+        🎉 Congratulations! You've completed all your study sessions!
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const progressBars = document.querySelectorAll('.progress-bar');
+            const checkboxes = document.querySelectorAll('.session-checkbox');
+            const progressBar = document.getElementById('progress-bar');
+            const congratsMessage = document.getElementById('congrats-message');
 
-            progressBars.forEach(bar => {
-                const completion = parseInt(bar.style.width);
-                if (completion === 100) {
-                    bar.style.backgroundColor = '#4CAF50'; /* Green for completed */
+            function updateProgress() {
+                const total = checkboxes.length;
+                const checked = document.querySelectorAll('.session-checkbox:checked').length;
+                const percent = Math.floor((checked / total) * 100);
+                progressBar.style.width = percent + '%';
+                progressBar.textContent = percent + '%';
+
+                if (percent === 100) {
+                    congratsMessage.style.display = 'block';
+                } else {
+                    congratsMessage.style.display = 'none';
                 }
+            }
+
+            checkboxes.forEach(cb => {
+                cb.addEventListener('change', updateProgress);
             });
         });
     </script>
