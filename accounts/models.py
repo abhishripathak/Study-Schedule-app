@@ -1,6 +1,5 @@
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin 
 from django.db import models
-import uuid
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, username, email, password=None):
@@ -20,8 +19,15 @@ class CustomUserManager(BaseUserManager):
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=150, unique=True)
-
     email = models.EmailField(unique=True)
+    
+    # New fields for study planner
+    education_level = models.CharField(max_length=100, blank=True, null=True)
+    subjects = models.TextField(blank=True, null=True)  # comma-separated subjects
+    available_study_hours = models.IntegerField(blank=True, null=True)
+    preferred_study_time = models.CharField(max_length=50, blank=True, null=True)
+    study_goal = models.TextField(blank=True, null=True)
+    
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
