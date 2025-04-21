@@ -1,134 +1,98 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Study Plan</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #ffe6f2; /* Light pink background */
-            color: #333;
-        }
+{% extends 'accounts/base.html' %}
 
-        .progress-container {
-            width: 100%;
-            background-color: #ffd9ec; /* Light pink */
-            border-radius: 5px;
-            margin-top: 20px;
-        }
+{% block content %}
+<!-- ✅ Navigation Bar -->
+<div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 30px; background-color: #fff0f6; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+    <div style="font-size: 20px; font-weight: bold;">📚 StudyBuddy</div>
+    <div style="display: flex; gap: 20px;">
+        <a href="/" style="text-decoration: none; color: #333;">Home</a>
+        <a href="/dashboard" style="text-decoration: none; color: #333;">Dashboard</a>
+        <a href="/logout" style="text-decoration: none; color: #e60073;">Logout</a>
+    </div>
+</div>
 
-        .progress-bar {
-            width: 0%;
-            height: 20px;
-            background-color: #ff66b2; /* Darker pink */
-            border-radius: 5px;
-            text-align: center;
-            color: white;
-        }
+<!-- ✅ Flash Messages -->
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-success" role="alert" style="background-color: #d4edda; color: #155724; border-radius: 5px; padding: 10px; margin-bottom: 20px;">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
 
-        .congrats-message {
-            display: none;
-            margin-top: 20px;
-            color: #ff3385; /* Even darker pink */
-            font-weight: bold;
-        }
-
-        #study-plan-form ul {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        #study-plan-form li {
-            margin: 10px 0;
-        }
-
-        label {
-            font-size: 18px;
-            color: #ff4d94; /* Pink text */
-        }
-
-        a {
-            color: #ff4d94; /* Pink links */
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        a:hover {
-            color: #e60073; /* Darker pink on hover */
-        }
-
-        .card {
-            background-color: #ffe6f2; /* Light pink */
-            border: 1px solid #ff99cc; /* Pink border */
-            border-radius: 10px;
-            padding: 20px;
-            margin: 10px;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .card h3 {
-            color: #ff4d94; /* Pink text */
-        }
-
-        .card .progress-container {
-            margin-top: 10px;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 10px 20px;
-            font-size: 16px;
-            color: white;
-            background-color: #ff4d94; /* Pink button */
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            text-decoration: none;
-        }
-
-        .btn:hover {
-            background-color: #e60073; /* Darker pink on hover */
-        }
-
-        .btn-pink {
-            margin-top: 20px;
-        }
-    </style>
-</head>
-<body>
-    <h1 style="color: #ff4d94;">Your Personalized Study Plan ✨</h1>
+<!-- ✅ Study Plan Overview -->
+<div class="container text-center my-5 text-dark">
+    <h2 style="color: deeppink;">Your Personalized Study Plan ✨</h2>
     <p><strong>Goal:</strong> {{ goal }}</p>
     <p><strong>Preferred Time:</strong> {{ preferred_time }}</p>
+</div>
 
-    <div class="card-container">
-        {% for subject, details in study_plan.items %}
-        <div class="card">
-            <h3>{{ subject }}</h3>
+<!-- ✅ Subject Cards with Progress and Checkboxes -->
+<div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;">
+    {% for subject, details in study_plan.items %}
+        <div style="background-color: #ffe6f0; padding: 20px; border-radius: 15px; width: 250px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <h3 style="margin: 0 0 10px;">📘 {{ subject|title }}</h3>
             <p>{{ details.sessions }} sessions ({{ details.hours_per_day }} hrs/day)</p>
-            <div class="progress-container">
-                <div class="progress-bar" style="width: {{ details.completion }}%;">{{ details.completion }}% completed</div>
+            <div style="background-color: #f3f3f3; border-radius: 10px; overflow: hidden; height: 10px; margin-bottom: 10px;">
+                <div id="progress-{{ subject }}" style="width: {{ details.completion }}%; background-color: #ff66b2; height: 10px;"></div>
+            </div>
+            <small id="completion-text-{{ subject }}">{{ details.completion }}% completed</small>
+            <div style="margin-top: 10px;">
+                {% for session in details.sessions_list %}
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
+                        <input type="checkbox" class="session-checkbox" data-subject="{{ subject }}" data-total="{{ details.sessions }}" id="checkbox-{{ subject }}-{{ forloop.counter }}">
+                        <label for="checkbox-{{ subject }}-{{ forloop.counter }}">{{ session }}</label>
+                    </div>
+                {% endfor %}
             </div>
         </div>
-        {% endfor %}
+    {% endfor %}
+</div>
+
+<!-- ✅ Buttons -->
+<div style="text-align: center; margin-top: 40px;">
+    <form method="post" action="{% url 'generate_plan' %}">
+        {% csrf_token %}
+        <button type="submit" style="background-color: #ff4da6; color: white; padding: 10px 20px; border: none; border-radius: 10px; cursor: pointer;">🔄 Regenerate Plan</button>
+    </form>
+</div>
+
+<!-- ✅ Completion Message -->
+{% if completed %}
+    <div style="margin: 40px auto; max-width: 600px; background-color: #d1ffd6; color: #2d862d; padding: 20px; border-radius: 10px; font-weight: bold; text-align: center;">
+        🎉 Congrats! You've completed your entire study routine! Keep up the amazing work! ✨
     </div>
+{% endif %}
 
-    <div>
-        <a href="{% url 'generate_plan' %}" class="btn btn-pink">Regenerate Plan</a>
-    </div>
+<!-- ✅ JavaScript for Progress Bar and Completion Message -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const checkboxes = document.querySelectorAll('.session-checkbox');
+        const progressBars = {};
+        const completionTexts = {};
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const progressBars = document.querySelectorAll('.progress-bar');
+        checkboxes.forEach(checkbox => {
+            const subject = checkbox.dataset.subject;
+            const totalSessions = parseInt(checkbox.dataset.total);
 
-            progressBars.forEach(bar => {
-                const completion = parseInt(bar.style.width);
-                if (completion === 100) {
-                    bar.style.backgroundColor = '#4CAF50'; /* Green for completed */
+            if (!progressBars[subject]) {
+                progressBars[subject] = document.getElementById(`progress-${subject}`);
+                completionTexts[subject] = document.getElementById(`completion-text-${subject}`);
+            }
+
+            checkbox.addEventListener('change', function () {
+                const checkedCount = document.querySelectorAll(`.session-checkbox[data-subject="${subject}"]:checked`).length;
+                const completionPercentage = Math.round((checkedCount / totalSessions) * 100);
+
+                progressBars[subject].style.width = `${completionPercentage}%`;
+                completionTexts[subject].textContent = `${completionPercentage}% completed`;
+
+                // Check if all checkboxes are checked
+                if (document.querySelectorAll('.session-checkbox:checked').length === checkboxes.length) {
+                    alert('🎉 Congrats! You have completed all sessions!');
                 }
             });
         });
-    </script>
-</body>
-</html>
+    });
+</script>
+{% endblock %}

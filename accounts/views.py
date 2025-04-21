@@ -73,8 +73,8 @@ def dashboard(request):
         # Generate plan
         plan, is_single_day = generate_study_plan(subjects, available_hours, start_date, end_date, request)
 
-        # Save in session
-        request.session['study_plan'] = plan
+        # Serialize plan as a list of dictionaries
+        request.session['study_plan'] = [dict(session) for session in plan]
         request.session['goal'] = study_goal
         request.session['preferred_time'] = preferred_study_time
         request.session['single_day'] = is_single_day
@@ -84,10 +84,11 @@ def dashboard(request):
     else:
         return render(request, 'accounts/dashboard.html')
 
-# Routine generation logic
+# Updated generate_study_plan to divide subjects into sessions and include session details
+
 def generate_study_plan(subjects, available_hours, start_date, end_date, request):
     is_single_day = start_date == end_date
-    plan = {}
+    plan = []  # Changed to a list to store session details
 
     if is_single_day:
         total_minutes = available_hours * 60
@@ -97,7 +98,11 @@ def generate_study_plan(subjects, available_hours, start_date, end_date, request
             messages.warning(request, "Each subject gets less than 10 minutes!")
 
         for subject in subjects:
-            plan[subject] = f"{minutes_per_subject} minutes"
+            plan.append({
+                'subject': subject,
+                'duration': f"{minutes_per_subject} minutes",
+                'completed': False
+            })
 
     else:
         total_days = (datetime.strptime(end_date, '%Y-%m-%d') - datetime.strptime(start_date, '%Y-%m-%d')).days + 1
@@ -105,22 +110,42 @@ def generate_study_plan(subjects, available_hours, start_date, end_date, request
         sessions_per_subject = total_sessions // len(subjects)
 
         for subject in subjects:
-            plan[subject] = f"{sessions_per_subject} sessions ({available_hours} hrs/day)"
+            for session in range(sessions_per_subject):
+                plan.append({
+                    'subject': subject,
+                    'duration': f"{available_hours} hrs/day",
+                    'completed': False
+                })
 
     return plan, is_single_day
 
-# Display the generated plan
+# Ensure study_plan is deserialized correctly in show_plan
+
 def show_plan(request):
-    study_plan = request.session.get('study_plan', {})
+    study_plan = request.session.get('study_plan', [])
+    if isinstance(study_plan, str):
+        import json
+        study_plan = json.loads(study_plan)  # Deserialize if stored as a JSON string
+
     goal = request.session.get('goal', '')
     preferred_time = request.session.get('preferred_time', '')
     single_day = request.session.get('single_day', False)
+
+    # Calculate progress
+    total_sessions = len(study_plan)
+    completed_sessions = sum(1 for session in study_plan if isinstance(session, dict) and session.get('completed'))
+    progress = (completed_sessions / total_sessions) * 100 if total_sessions > 0 else 0
+
+    # Check if all sessions are completed
+    all_completed = completed_sessions == total_sessions
 
     return render(request, 'accounts/study_plan.html', {
         'study_plan': study_plan,
         'goal': goal,
         'preferred_time': preferred_time,
-        'single_day': single_day
+        'single_day': single_day,
+        'progress': progress,
+        'all_completed': all_completed
     })
 
 # Regenerate the study plan (same as reloading dashboard)
