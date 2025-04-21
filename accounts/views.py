@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from datetime import datetime
 from django.contrib import messages
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from .forms import CustomUserCreationForm
 from .models import CustomUser
 
@@ -34,6 +34,12 @@ def user_login(request):
         else:
             messages.error(request, 'Invalid username or password.')
     return render(request, 'accounts/login.html')
+
+# Logout View
+def user_logout(request):
+    logout(request)
+    messages.success(request, 'Logged out successfully!')
+    return redirect('home')
 
 # Dashboard View
 def dashboard(request):
@@ -105,14 +111,10 @@ def generate_study_plan(subjects, available_hours, start_date, end_date, request
 
 # Display the generated plan
 def show_plan(request):
-    study_plan = request.session.get('study_plan')
-    goal = request.session.get('goal')
-    preferred_time = request.session.get('preferred_time')
-    single_day = request.session.get('single_day')
-
-    if not study_plan:
-        messages.error(request, "No study plan found. Please create one.")
-        return redirect('dashboard')
+    study_plan = request.session.get('study_plan', {})
+    goal = request.session.get('goal', '')
+    preferred_time = request.session.get('preferred_time', '')
+    single_day = request.session.get('single_day', False)
 
     return render(request, 'accounts/study_plan.html', {
         'study_plan': study_plan,
@@ -121,12 +123,12 @@ def show_plan(request):
         'single_day': single_day
     })
 
-# ✅ NEW: Regenerate the study plan (same as reloading dashboard)
+# Regenerate the study plan (same as reloading dashboard)
 def generate_plan(request):
     messages.info(request, "You can update your details and generate a new study plan.")
     return redirect('dashboard')
 
-# ✅ NEW: Edit user preferences (future development)
+# Edit user preferences (future development)
 def edit_preferences(request):
     return render(request, 'accounts/edit_preferences.html')
 

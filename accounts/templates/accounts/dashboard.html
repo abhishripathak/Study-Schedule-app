@@ -1,4 +1,4 @@
-{% load static %} 
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -63,7 +63,6 @@
                     <option value="Undergraduate" {% if education_level == "Undergraduate" %}selected{% endif %}>Undergraduate</option>
                     <option value="Postgraduate" {% if education_level == "Postgraduate" %}selected{% endif %}>Postgraduate</option>
                 </select>
-                
             </div>
 
             <div class="form-group">
@@ -81,7 +80,7 @@
                 <select class="form-control" id="preferred_study_time" name="preferred_study_time" required>
                     <option value="" {% if not preferred_study_time %}selected{% endif %}>Select Time</option>
                     <option value="Morning" {% if preferred_study_time == "Morning" %}selected{% endif %}>Morning</option>
-                    <option value="Afternoon" {% if preferred_study_time == "Afternoon" %}selected{% endif %}>Afternoon</option> 
+                    <option value="Afternoon" {% if preferred_study_time == "Afternoon" %}selected{% endif %}>Afternoon</option>
                     <option value="Evening" {% if preferred_study_time == "Evening" %}selected{% endif %}>Evening</option>
                     <option value="Night" {% if preferred_study_time == "Night" %}selected{% endif %}>Night</option>
                 </select>
@@ -113,8 +112,8 @@
             {% if goal %}
                 <p><strong>Goal:</strong> {{ goal }}</p>
             {% endif %}
-            {% if preferred_time %}
-                <p><strong>Preferred Time:</strong> {{ preferred_time }}</p>
+            {% if preferred_study_time %}
+                <p><strong>Preferred Time:</strong> {{ preferred_study_time }}</p>
             {% endif %}
 
             {% for day in study_plan %}

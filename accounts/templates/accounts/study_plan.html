@@ -1,63 +1,108 @@
-{% extends 'accounts/base.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Study Plan</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
 
-{% block content %}
-<!-- ✅ Navigation Bar -->
-<div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 30px; background-color: #fff0f6; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-    <div style="font-size: 20px; font-weight: bold;">📚 StudyBuddy</div>
-    <div style="display: flex; gap: 20px;">
-        <a href="/" style="text-decoration: none; color: #333;">Home</a>
-        <a href="/dashboard" style="text-decoration: none; color: #333;">Dashboard</a>
-        <a href="/settings" style="text-decoration: none; color: #333;">Settings</a>
-        <a href="/logout" style="text-decoration: none; color: #e60073;">Logout</a>
-    </div>
-</div>
+        .progress-container {
+            width: 100%;
+            background-color: #f3f3f3;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
 
-<!-- ✅ Flash Messages -->
-{% if messages %}
-    {% for message in messages %}
-        <div class="alert alert-success" role="alert" style="background-color: #d4edda; color: #155724; border-radius: 5px; padding: 10px; margin-bottom: 20px;">
-            {{ message }}
-        </div>
-    {% endfor %}
-{% endif %}
+        .progress-bar {
+            width: 0%;
+            height: 20px;
+            background-color: #4caf50;
+            border-radius: 5px;
+            text-align: center;
+            color: white;
+        }
 
-<!-- ✅ Study Plan Overview -->
-<div class="container text-center my-5 text-dark">
-    <h2 style="color: deeppink;">Your Personalized Study Plan ✨</h2>
-    <p><strong>Goal:</strong> {{ goal }}</p>
-    <p><strong>Preferred Time:</strong> {{ preferred_time }}</p>
-</div>
+        .congrats-message {
+            display: none;
+            margin-top: 20px;
+            color: green;
+            font-weight: bold;
+        }
 
-<!-- ✅ Subject Cards with Progress -->
-<div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;">
-    {% for subject, time in study_plan.items %}
-        <div style="background-color: #ffe6f0; padding: 20px; border-radius: 15px; width: 250px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-            <h3 style="margin: 0 0 10px;">📘 {{ subject|title }}</h3>
-            <p>{{ time }}</p>
-            {% with percent=60 %} <!-- You can change this later -->
-            <div style="background-color: #f3f3f3; border-radius: 10px; overflow: hidden; height: 10px;">
-                <div style="width: {{ percent }}%; background-color: #ff66b2; height: 10px;"></div>
-            </div>
-            <small>{{ percent }}% completed</small>
-            {% endwith %}
-        </div>
-    {% endfor %}
-</div>
+        #study-plan-form ul {
+            list-style-type: none;
+            padding: 0;
+        }
 
-<!-- ✅ Buttons -->
-<div style="text-align: center; margin-top: 40px;">
-    <form method="post" action="{% url 'generate_plan' %}">
-        {% csrf_token %}
-        <button type="submit" style="background-color: #ff4da6; color: white; padding: 10px 20px; border: none; border-radius: 10px; cursor: pointer;">🔄 Regenerate Plan</button>
+        #study-plan-form li {
+            margin: 10px 0;
+        }
+
+        label {
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Your Study Plan</h1>
+    <form id="study-plan-form">
+        <ul>
+            {% for session in study_plan %}
+            <li>
+                <input type="checkbox" class="session-checkbox" id="session-{{ forloop.counter }}">
+                <label for="session-{{ forloop.counter }}">{{ session }}</label>
+            </li>
+            {% endfor %}
+        </ul>
     </form>
 
-    <a href="{% url 'edit_preferences' %}" style="display: inline-block; margin-top: 15px; background-color: #ffb3d9; padding: 10px 15px; border-radius: 10px; color: black; text-decoration: none;">✏️ Edit Preferences</a>
-</div>
-
-<!-- ✅ Completion Message -->
-{% if completed %}
-    <div style="margin: 40px auto; max-width: 600px; background-color: #d1ffd6; color: #2d862d; padding: 20px; border-radius: 10px; font-weight: bold; text-align: center;">
-        🎉 Congrats! You've completed your entire study routine! Keep up the amazing work! ✨
+    <div class="progress-container">
+        <div class="progress-bar" id="progress-bar">0%</div>
     </div>
-{% endif %}
-{% endblock %}
+
+    <div class="congrats-message" id="congrats-message">
+        🎉 Congratulations! You've completed all your study sessions!
+    </div>
+
+    <div>
+        <a href="{% url 'logout' %}" style="margin-right: 20px;">Logout</a>
+        <a href="{% url 'generate_plan' %}">Regenerate Plan</a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const checkboxes = document.querySelectorAll('.session-checkbox');
+            const progressBar = document.getElementById('progress-bar');
+            const congratsMessage = document.getElementById('congrats-message');
+
+            function updateProgress() {
+                const total = checkboxes.length;
+                const checked = document.querySelectorAll('.session-checkbox:checked').length;
+                const percent = Math.floor((checked / total) * 100);
+
+                // Update progress bar width and text
+                progressBar.style.width = percent + '%';
+                progressBar.textContent = percent + '%';
+
+                // Display completion message when all tasks are checked
+                if (percent === 100) {
+                    congratsMessage.style.display = 'block';
+                } else {
+                    congratsMessage.style.display = 'none';
+                }
+            }
+
+            // Listen to checkbox change events to trigger progress update
+            checkboxes.forEach(cb => {
+                cb.addEventListener('change', updateProgress);
+            });
+
+            // Initial progress check in case some checkboxes are pre-checked
+            updateProgress();
+        });
+    </script>
+</body>
+</html>
