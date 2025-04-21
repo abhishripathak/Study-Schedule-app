@@ -7,11 +7,13 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            background-color: #ffe6f2; /* Light pink background */
+            color: #333;
         }
 
         .progress-container {
             width: 100%;
-            background-color: #f3f3f3;
+            background-color: #ffd9ec; /* Light pink */
             border-radius: 5px;
             margin-top: 20px;
         }
@@ -19,7 +21,7 @@
         .progress-bar {
             width: 0%;
             height: 20px;
-            background-color: #4caf50;
+            background-color: #ff66b2; /* Darker pink */
             border-radius: 5px;
             text-align: center;
             color: white;
@@ -28,7 +30,7 @@
         .congrats-message {
             display: none;
             margin-top: 20px;
-            color: green;
+            color: #ff3385; /* Even darker pink */
             font-weight: bold;
         }
 
@@ -43,65 +45,89 @@
 
         label {
             font-size: 18px;
+            color: #ff4d94; /* Pink text */
+        }
+
+        a {
+            color: #ff4d94; /* Pink links */
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        a:hover {
+            color: #e60073; /* Darker pink on hover */
+        }
+
+        .card {
+            background-color: #ffe6f2; /* Light pink */
+            border: 1px solid #ff99cc; /* Pink border */
+            border-radius: 10px;
+            padding: 20px;
+            margin: 10px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h3 {
+            color: #ff4d94; /* Pink text */
+        }
+
+        .card .progress-container {
+            margin-top: 10px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: white;
+            background-color: #ff4d94; /* Pink button */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background-color: #e60073; /* Darker pink on hover */
+        }
+
+        .btn-pink {
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <h1>Your Study Plan</h1>
-    <form id="study-plan-form">
-        <ul>
-            {% for session in study_plan %}
-            <li>
-                <input type="checkbox" class="session-checkbox" id="session-{{ forloop.counter }}">
-                <label for="session-{{ forloop.counter }}">{{ session }}</label>
-            </li>
-            {% endfor %}
-        </ul>
-    </form>
+    <h1 style="color: #ff4d94;">Your Personalized Study Plan ✨</h1>
+    <p><strong>Goal:</strong> {{ goal }}</p>
+    <p><strong>Preferred Time:</strong> {{ preferred_time }}</p>
 
-    <div class="progress-container">
-        <div class="progress-bar" id="progress-bar">0%</div>
-    </div>
-
-    <div class="congrats-message" id="congrats-message">
-        🎉 Congratulations! You've completed all your study sessions!
+    <div class="card-container">
+        {% for subject, details in study_plan.items %}
+        <div class="card">
+            <h3>{{ subject }}</h3>
+            <p>{{ details.sessions }} sessions ({{ details.hours_per_day }} hrs/day)</p>
+            <div class="progress-container">
+                <div class="progress-bar" style="width: {{ details.completion }}%;">{{ details.completion }}% completed</div>
+            </div>
+        </div>
+        {% endfor %}
     </div>
 
     <div>
-        <a href="{% url 'logout' %}" style="margin-right: 20px;">Logout</a>
-        <a href="{% url 'generate_plan' %}">Regenerate Plan</a>
+        <a href="{% url 'generate_plan' %}" class="btn btn-pink">Regenerate Plan</a>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const checkboxes = document.querySelectorAll('.session-checkbox');
-            const progressBar = document.getElementById('progress-bar');
-            const congratsMessage = document.getElementById('congrats-message');
+            const progressBars = document.querySelectorAll('.progress-bar');
 
-            function updateProgress() {
-                const total = checkboxes.length;
-                const checked = document.querySelectorAll('.session-checkbox:checked').length;
-                const percent = Math.floor((checked / total) * 100);
-
-                // Update progress bar width and text
-                progressBar.style.width = percent + '%';
-                progressBar.textContent = percent + '%';
-
-                // Display completion message when all tasks are checked
-                if (percent === 100) {
-                    congratsMessage.style.display = 'block';
-                } else {
-                    congratsMessage.style.display = 'none';
+            progressBars.forEach(bar => {
+                const completion = parseInt(bar.style.width);
+                if (completion === 100) {
+                    bar.style.backgroundColor = '#4CAF50'; /* Green for completed */
                 }
-            }
-
-            // Listen to checkbox change events to trigger progress update
-            checkboxes.forEach(cb => {
-                cb.addEventListener('change', updateProgress);
             });
-
-            // Initial progress check in case some checkboxes are pre-checked
-            updateProgress();
         });
     </script>
 </body>

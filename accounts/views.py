@@ -128,10 +128,6 @@ def generate_plan(request):
     messages.info(request, "You can update your details and generate a new study plan.")
     return redirect('dashboard')
 
-# Edit user preferences (future development)
-def edit_preferences(request):
-    return render(request, 'accounts/edit_preferences.html')
-
 def study_plan_view(request):
     user = request.user
     
@@ -153,7 +149,7 @@ def study_plan_view(request):
     }
     return render(request, 'accounts/study_plan.html', context)
 
-def regenerate_plan(request):
+#def regenerate_plan(request):
     if request.method == "POST":
         messages.success(request, "✅ Your plan has been regenerated!")
         return redirect('study_plan')
