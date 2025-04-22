@@ -1,47 +1,63 @@
 pipeline {
-    agent {
-        docker {
-            image 'python:3.11'
-        }
+    agent any
+
+    environment {
+        IMAGE_NAME = "studyplanner"  // Adjusted to your project name
+        IMAGE_TAG = "v1"
+        FULL_IMAGE_NAME = "${IMAGE_NAME}:${IMAGE_TAG}"
+        CONTAINER_NAME = "studyplanner_container"  // Adjusted to your project container name
+        GIT_REPO_URL = 'https://github.com/abhishripathak/Study-Schedule-app.git'  // Your GitHub repo URL
+        GIT_CREDENTIALS_ID = 'studyplan'  // Use the correct credentials ID for Jenkins
     }
 
     stages {
         stage('Checkout') {
             steps {
-                echo 'Checking out code...'
-                checkout([
-                    $class: 'GitSCM',
-                    branches: [[name: '*/main']],
-                    userRemoteConfigs: [[
-                        url: 'https://github.com/abhishripathak/Study-Schedule-app.git',
-                        credentialsId: 'studyplan'
-                    ]]
+                echo 'Checking out code from GitHub...'
+                checkout([ 
+                    $class: 'GitSCM', 
+                    branches: [[name: '*/main']], 
+                    extensions: [], 
+                    userRemoteConfigs: [[ 
+                        url: GIT_REPO_URL, 
+                        credentialsId: GIT_CREDENTIALS_ID 
+                    ]] 
                 ])
             }
         }
 
-        stage('Setup Environment') {
+        stage('Build Docker Image') {
             steps {
-                echo 'Installing dependencies...'
-                sh '''
-                    python -m ensurepip --upgrade
-                    pip install --upgrade pip
-                    pip install -r requirements.txt
-                '''
+                echo 'Building Docker image...'
+                script {
+                    sh 'docker build -t $FULL_IMAGE_NAME .'  // Builds the Docker image with the correct name and tag
+                }
             }
         }
 
         stage('Run Tests') {
             steps {
                 echo 'Running tests (if any)...'
-                // Example: sh 'pytest'
+                // Example: sh 'docker run --rm $FULL_IMAGE_NAME pytest'
+                // Add your test commands if needed
             }
         }
 
         stage('Deploy') {
             steps {
-                echo 'Deploying...'
-                sh 'docker-compose up -d'
+                echo 'Deploying application using Docker Compose...'
+                script {
+                    sh 'docker-compose -f docker-compose.yml up -d'  // Deploys with Docker Compose
+                }
+            }
+        }
+
+        stage('Cleanup Old Container (Optional)') {
+            steps {
+                echo 'Cleaning up old containers...'
+                script {
+                    sh "docker rm -f $CONTAINER_NAME || true"  // Removes old containers if any
+                }
             }
         }
     }
