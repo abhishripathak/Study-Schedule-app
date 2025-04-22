@@ -1,28 +1,47 @@
 pipeline {
-    agent any
-    
+    agent {
+        docker {
+            image 'python:3.11'
+        }
+    }
+
     stages {
         stage('Checkout') {
             steps {
-                checkout scm
+                echo 'Checking out code...'
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: '*/main']],
+                    userRemoteConfigs: [[
+                        url: 'https://github.com/abhishripathak/Study-Schedule-app.git',
+                        credentialsId: 'studyplan'
+                    ]]
+                ])
             }
         }
-        
+
         stage('Setup Environment') {
             steps {
-                sh 'pip install -r requirements.txt'
+                echo 'Installing dependencies...'
+                sh '''
+                    python -m ensurepip --upgrade
+                    pip install --upgrade pip
+                    pip install -r requirements.txt
+                '''
             }
         }
-        
+
         stage('Run Tests') {
             steps {
-                sh 'python manage.py test'
+                echo 'Running tests (if any)...'
+                // Example: sh 'pytest'
             }
         }
-        
+
         stage('Deploy') {
             steps {
-                echo 'Deployment steps would go here'
+                echo 'Deploying...'
+                sh 'docker-compose up -d'
             }
         }
     }
