@@ -1,5 +1,5 @@
-# Use official Node.js image
-FROM node:18-slim
+# Stage 1: Build React App
+FROM node:18-slim AS build
 
 # Set environment variables
 ENV NODE_ENV=production
@@ -8,22 +8,28 @@ ENV PORT=3000
 # Set working directory
 WORKDIR /app
 
-# Install app dependencies
+# Install dependencies
 COPY package*.json ./
 RUN npm install
 
-# Copy the rest of the app
+# Copy application code and build
 COPY . .
-
-# Build the React app
 RUN npm run build
 
-# Use a lightweight web server to serve static files
+# Stage 2: Serve with Nginx
 FROM nginx:alpine
-COPY --from=0 /app/build /usr/share/nginx/html
 
-# Expose port
-EXPOSE 3000
+# Remove default nginx static assets
+RUN rm -rf /usr/share/nginx/html/*
 
-# Start nginx server
+# Copy built assets from previous stage
+COPY --from=build /app/build /usr/share/nginx/html
+
+# Optional: Copy custom nginx config (if any)
+# COPY nginx.conf /etc/nginx/nginx.conf
+
+# Expose port 3000 (although Nginx default is 80)
+EXPOSE 80
+
+# Start nginx
 CMD ["nginx", "-g", "daemon off;"]

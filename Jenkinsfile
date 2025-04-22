@@ -13,7 +13,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                echo '🔄 Checking out code from GitHub...'
+                echo 'Checking out code from GitHub...'
                 checkout([
                     $class: 'GitSCM',
                     branches: [[name: '*/main']],
@@ -28,28 +28,28 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                echo '🐳 Building Docker image...'
+                echo 'Building Docker image...'
                 sh 'docker build -t $FULL_IMAGE_NAME .'
             }
         }
 
         stage('Cleanup Old Container') {
             steps {
-                echo '🧹 Cleaning up old container if it exists...'
+                echo 'Cleaning up old container if it exists...'
                 sh 'docker rm -f $CONTAINER_NAME || true'
             }
         }
 
         stage('Deploy') {
             steps {
-                echo '🚀 Deploying application using Docker Compose...'
+                echo ' Deploying application using Docker Compose...'
                 sh 'docker-compose -f docker-compose.yml up -d'
             }
         }
 
         stage('Run Tests') {
             steps {
-                echo '🧪 Running tests (if applicable)...'
+                echo ' Running tests (if applicable)...'
                 // sh 'docker run --rm $FULL_IMAGE_NAME pytest' // Add your test logic here
             }
         }
