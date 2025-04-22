@@ -1,10 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'docker:24.0.5-dind' // or any stable Docker-in-Docker image
-            args '-v /var/run/docker.sock:/var/run/docker.sock'
-        }
-    }
+    agent any
 
     environment {
         IMAGE_NAME = "studyplanner"
@@ -38,9 +33,9 @@ pipeline {
             }
         }
 
-        stage('Cleanup Old Container (Optional)') {
+        stage('Cleanup Old Container') {
             steps {
-                echo '🧹 Cleaning up old containers (if any)...'
+                echo '🧹 Cleaning up old container if it exists...'
                 sh 'docker rm -f $CONTAINER_NAME || true'
             }
         }
@@ -54,9 +49,8 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                echo '🧪 Running tests (if defined)...'
-                // Example placeholder — adjust based on your project
-                // sh 'docker run --rm $FULL_IMAGE_NAME pytest'
+                echo '🧪 Running tests (if applicable)...'
+                // sh 'docker run --rm $FULL_IMAGE_NAME pytest' // Add your test logic here
             }
         }
     }
