@@ -1,35 +1,27 @@
-# Stage 1: Build React App
-FROM node:18-slim AS build
+# Use official Python image
+FROM python:3.13-slim
 
 # Set environment variables
-ENV NODE_ENV=production
-ENV PORT=3000
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
-# Set working directory
+# Set work directory
 WORKDIR /app
 
-# Install dependencies
-COPY package*.json ./
-RUN npm install
+# Install system dependencies (for PostgreSQL support)
+RUN apt-get update \
+    && apt-get install -y libpq-dev gcc \
+    && pip install --upgrade pip
 
-# Copy application code and build
+# Copy requirements and install dependencies
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
+# Copy project files into the container
 COPY . .
-RUN npm run build
 
-# Stage 2: Serve with Nginx
-FROM nginx:alpine
+# Expose Django's default port
+EXPOSE 8000
 
-# Remove default nginx static assets
-RUN rm -rf /usr/share/nginx/html/*
-
-# Copy built assets from previous stage
-COPY --from=build /app/build /usr/share/nginx/html
-
-# Optional: Copy custom nginx config (if any)
-# COPY nginx.conf /etc/nginx/nginx.conf
-
-# Expose port 3000 (although Nginx default is 80)
-EXPOSE 80
-
-# Start nginx
-CMD ["nginx", "-g", "daemon off;"]
+# Command to run Django development server
+CMD ["python", "backend/manage.py", "runserver", "0.0.0.0:8000"]
